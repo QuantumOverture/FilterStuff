@@ -12,7 +12,7 @@ def UserView(request,UserName):
 
     if UserName != request.user.username:
         return redirect("UserView",UserName = request.user.username)
-    return HttpResponse("<h1>{}</h1>".format(UserName))
+    return render(request,"MainApp/user.html",{'UserName':UserName})
     
 @login_required 
 def UserViewRedirect(request):
