@@ -1,0 +1,77 @@
+{% extends "MainApp/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+	<div class="container">
+		<h1> Hi {{ UserName }},</h1>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="container">
+		<p>
+		 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#TextAdd">
+			Add Filter Term
+		</button>
+		</p>
+		<div class="collapse" id="TextAdd">
+		  <div class="card card-body">
+			<form method="POST"> {% csrf_token %}
+				{{WordEntryForm|crispy}}
+				<button type="submit" name="AddWord" class="btn btn-success"> ADD </button>
+			</form>
+			
+			
+			
+		  </div>
+		</div>
+	</div>
+	
+	<br>
+	
+	<div class="container">
+		<p>
+		 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#RadioDelete">
+			View and Delete Filter Term
+		</button>
+		</p>
+		<div class="collapse" id="RadioDelete">
+		  <div class="card card-body">
+			<form method="POST"> {% csrf_token %}
+				{{WordDeleteForm|crispy}}
+				<button type="submit" name="DeleteWord" class="btn btn-danger"> DELETE </button>
+			</form>
+			
+			
+		  </div>
+		</div>
+	
+	</div>
+	<hr/>
+	<br>
+	
+	<div class="container">
+		<a href="{% url 'UserViewRedirect' %}" class="btn btn-info" role="button">Clear Subreddit Selection</a>
+	</div>
+	
+	<br>
+	<div class="container">
+	<form method="POST"> {% csrf_token %}
+			{{RedditSearch|crispy}}
+			<button type="submit" name="Search" class="btn btn-secondary"> Search </button>
+		</form>
+		<hr/>
+		<h3>Current Subreddit: {{SubredditTitle}} </h3>
+		<ul class="list-group">
+		{% for DataItem in SubredditData%}
+			<li class="list-group-item">
+				<h4>{{ DataItem.title}}</h3>
+				<p>{{ DataItem.description}}</p>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+{% endblock content %}
