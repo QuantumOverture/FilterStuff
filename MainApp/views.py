@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from MainApp.models import UserListWord
 import praw
+from praw.models import MoreComments
 import json
 
 def HomePage(request):
@@ -33,15 +34,18 @@ def UserView(request,UserName):
                 NewWord = form.cleaned_data["NewWordField"]
                 NewWordModel = UserListWord(Word = NewWord, UserName = request.user)
                 NewWordModel.save()
-                
+            return redirect("UserView",UserName = request.user.username)
+            
         elif "DeleteWord" in request.POST:
             
             form = WordDeleteForm(request.POST)
             try:
                 DelWord = request.POST["Options"]
+                UserListWord.objects.filter(Word = DelWord, UserName = request.user).delete()
             except:
-                return redirect("UserView",UserName = request.user.username)
-            UserListWord.objects.filter(Word = DelWord, UserName = request.user).delete()
+                pass
+            
+            return redirect("UserView",UserName = request.user.username)
         elif "Search" in request.POST:
             form = RedditSearch(request.POST)
             if form.is_valid():
@@ -59,19 +63,27 @@ def UserView(request,UserName):
                 )
                 
                 try:
-                    for submission in RedditCrawl.subreddit(Subreddit).hot(limit=30):
+                    for submission in RedditCrawl.subreddit(Subreddit).hot(limit=13):
                         Text = submission.selftext
+                        Title = submission.title
+                        URL = submission.url
                         InvalidFlag = False
+
                         for Word in WordList:
-                            if Word[0] in Text:
+                            WordMatch = Word[0].lower()
+                            if WordMatch in Text.lower() or WordMatch in Title.lower():
                                 InvalidFlag = True
                                 break
                             else:
                                 continue
-                       
-                        SelectedSubredditData.append({"title":submission.title,"description":Text})
+                        
+                        
+                        if not InvalidFlag:
+                            SelectedSubredditData.append({"title":Title,
+                            "description":Text,
+                            "url":URL})
+                           
                 except:
-                    
                     SelectedSubredditData.append({"title":"Invalid Subreddit","description":""})
         else:
             return redirect('HomePage')

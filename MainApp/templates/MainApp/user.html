@@ -70,6 +70,20 @@
 			<li class="list-group-item">
 				<h4>{{ DataItem.title}}</h3>
 				<p>{{ DataItem.description}}</p>
+				<br>
+				
+				<p>
+					 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#URLTarget{{forloop.counter0}}">
+						Toggle URL Section
+					</button>
+				</p>
+					<div class="collapse" id="URLTarget{{forloop.counter0}}">
+					  <div class="card card-body">
+						<a href="{{ DataItem.url }}" class="link-info" target="_blank"> Go to post on Reddit. </a>
+					  </div>
+					</div>
+					
+				
 			</li>
 		{% endfor %}
 		</ul>
